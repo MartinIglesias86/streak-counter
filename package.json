@@ -23,7 +23,7 @@
   "scripts": {
     "build": "microbundle",
     "dev": "microbundle watch",
-    "unpkg": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "devDependencies": {
     "microbundle": "^0.15.1"
