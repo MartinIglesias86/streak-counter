@@ -59,11 +59,82 @@ describe('streakCounter', () => {
       mockLocalStorage.clear()
     })
     it('should return the streak from localStorage', () => {
-      const date = new Date()
+      const date = new Date('3/31/2023')
       const streak = streakCounter(mockLocalStorage, date)
 
       //Should match the dates used to set up the test
       expect(streak.startDate).toBe('3/31/2023')
+    })
+    it('should increment the streak', () => {
+      //It should increment because this is the day after
+      //the streak started and a streak is days in  a row
+      const date = new Date('4/01/2023')
+      const streak = streakCounter(mockLocalStorage, date)
+
+      expect(streak.currentCount).toBe(2)
+    })
+    it('should not increment the streak when login days is not consecutive', () => {
+      //It should not increment because this is two days after
+      //the streak started and the days are not consecutive
+      const date = new Date('4/02/2023')
+      const streak = streakCounter(mockLocalStorage, date)
+
+      expect(streak.currentCount).toBe(1)
+    })
+    it('should save the incremented streak to localStorage', () => {
+      const key = 'streak'
+      const date = new Date('4/01/2023')
+      //Call it once so it updates the streak
+      streakCounter(mockLocalStorage, date)
+
+      const streakAsString = mockLocalStorage.getItem(key)
+      try {
+        const streak = JSON.parse(streakAsString || '')
+        expect(streak.currentCount).toBe(2)
+      } catch (error) {
+        fail(error)
+      }
+    })
+    it('should reset if not consecutive', () => {
+      const date = new Date('4/01/2023')
+      const streak = streakCounter(mockLocalStorage, date)
+
+      expect(streak.currentCount).toBe(2)
+
+      // Skip a day and break the streak
+      const dateUpdated = new Date('4/03/2023')
+      const streakUpdated = streakCounter(mockLocalStorage, dateUpdated)
+
+      expect(streakUpdated.currentCount).toBe(1)
+    })
+    it('should save the reset streak to localStorage', () => {
+      const key = 'streak'
+      const date = new Date('4/01/2023')
+      //Call it once so it updates the streak
+      streakCounter(mockLocalStorage, date)
+
+      //Skip a day and break the streak
+      const dateUpdated = new Date('4/03/2023')
+      const streakUpdated = streakCounter(mockLocalStorage, dateUpdated)
+
+      const streakAsString = mockLocalStorage.getItem(key)
+      try {
+        const streak = JSON.parse(streakAsString || '')
+        expect(streak.currentCount).toBe(1)
+      } catch (error) {
+        fail(error)
+      }
+    })
+    it('should not reset the streak for same-day login', () => {
+      const date = new Date('4/01/2023')
+      //Call it once so it updates the streak
+      streakCounter(mockLocalStorage, date)
+
+      // Login on the same day and the streak should not reset
+      const dateUpdated = new Date('4/01/2023')
+      const streakUpdated = streakCounter(mockLocalStorage, dateUpdated)
+
+      expect(streakUpdated.currentCount).toBe(2)
     })
   })
 })
