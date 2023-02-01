@@ -1,6 +1,6 @@
 import { buildStreak, formattedDate, KEY, Streak, updateStreak } from "./utils"
 
-export function differenceInDays(dateLeft: Date, dateRight: Date): number {
+function differenceInDays(dateLeft: Date, dateRight: Date): number {
   const diffTime = Math.abs(dateLeft.getTime() - dateRight.getTime())
   const differenceInDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
   return differenceInDays
